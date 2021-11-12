@@ -389,9 +389,9 @@ function generateStars() {
     let si = Math.random() * 2 * Math.PI;
     let theta = Math.random() * Math.PI;
     let center = new THREE.Vector3(
-      1000 * Math.sin(theta) * Math.sin(si),
-      1000 * Math.cos(theta),
-      1000 * Math.sin(theta) * Math.cos(si)
+      900 * Math.sin(theta) * Math.sin(si),
+      900 * Math.cos(theta),
+      900 * Math.sin(theta) * Math.cos(si)
     );
     // let center = new THREE.Vector3(
     //   Math.random() * 500 - 250,
