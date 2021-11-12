@@ -1,8 +1,8 @@
+vec2 mUv = vUv*5.0;
+vec3 normalTex = texture2D( seaNormal, mUv ).xyz * 2.0 - 1.0;
 
-vec3 normalTex = texture2D( seaNormal, vUv ).xyz * 2.0 - 1.0;
 
-
-#ifdef OBJECTSPACE_NORMALMAP
+// #ifdef OBJECTSPACE_NORMALMAP
 
 	if( heightMetres< uSeaLevel){
     normal = normalTex;
@@ -20,7 +20,7 @@ vec3 normalTex = texture2D( seaNormal, vUv ).xyz * 2.0 - 1.0;
 
 	#endif
 
-	normal = normalize( normalMatrix * normal );
+	normal = normalize( normal );
 
 // #elif defined( TANGENTSPACE_NORMALMAP )
 
@@ -41,4 +41,4 @@ vec3 normalTex = texture2D( seaNormal, vUv ).xyz * 2.0 - 1.0;
 
 // 	normal = perturbNormalArb( - vViewPosition, normal, dHdxy_fwd(), faceDirection );
 
-#endif
+// #endif

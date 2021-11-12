@@ -1,12 +1,13 @@
-uniform sampler2D displacementTexture;
-uniform float uHeightScale;
 varying vec3 vNormal;
-varying vec2 vUV;
+varying vec2 vUv;
+varying vec3 vViewVector;
+varying vec3 vPosition;
 void main(){
-  vec4 bumpData = texture2D(displacementTexture,uv);
-  vec3 newPosition = position + normal*uHeightScale*bumpData.r;
+  vec3 newPosition = position ;
   vec4 finalPosition = (projectionMatrix * modelViewMatrix * vec4(newPosition,1.0)) ;
   gl_Position = finalPosition;
   vNormal = normal;
-  vUV = uv;
+  vUv = uv;
+  vViewVector = position - cameraPosition;
+  vPosition = newPosition;
 }

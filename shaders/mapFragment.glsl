@@ -12,6 +12,6 @@
   }
 
 	texelColor = mapTexelToLinear( texelColor );
-	diffuseColor *= texelColor;
+	diffuseColor *= texelColor;;
 
 #endif
