@@ -5,11 +5,12 @@ import mapShader from "./shaders/mapFragment.glsl";
 // import normalShader from "./shaders/normalFragment.glsl";
 import vertexShader from "./shaders/vertexShader.glsl";
 import fragmentShader from "./shaders/fragmentShader.glsl";
-import { GUI } from "lil-gui";
+import gsap from "gsap";
+// import { GUI } from "lil-gui";
 
 const clock = new THREE.Clock();
 clock.start();
-const gui = new GUI();
+// const gui = new GUI();
 const sizes = {
   width: window.innerWidth,
   height: window.innerHeight,
@@ -18,7 +19,7 @@ let PARAMS = {
   pointR: 150,
   pointTheta: Math.PI / 2,
   pointSi: Math.PI / 2,
-  ambientLightIntensity: 0.45,
+  ambientLightIntensity: 0.15,
 };
 
 //Handle Resize
@@ -111,27 +112,27 @@ const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 scene.add(sun);
 
 //Point Light GUI
-const pgui = gui.addFolder("Point Light");
-pgui.add(PARAMS, "ambientLightIntensity").min(0).max(1).step(0.01);
-pgui.add(PARAMS, "pointR").min(0).max(300).step(1);
-pgui.add(PARAMS, "pointTheta").min(0).max(Math.PI).step(0.001);
-pgui
-  .add(PARAMS, "pointSi")
-  .min(0)
-  .max(Math.PI * 2)
-  .step(0.001);
-pgui.add(pointLight.shadow.camera, "near").min(0).max(150).step(0.1);
-pgui.add(pointLight.shadow.camera, "far").min(0).max(300).step(0.1);
-pgui.add(sunMaterial, "emissiveIntensity").min(0).max(500).step(1);
-pgui.addColor(sunMaterial, "color");
+// const pgui = gui.addFolder("Point Light");
+// pgui.add(PARAMS, "ambientLightIntensity").min(0).max(1).step(0.01);
+// pgui.add(PARAMS, "pointR").min(0).max(300).step(1);
+// pgui.add(PARAMS, "pointTheta").min(0).max(Math.PI).step(0.001);
+// pgui
+//   .add(PARAMS, "pointSi")
+//   .min(0)
+//   .max(Math.PI * 2)
+//   .step(0.001);
+// pgui.add(pointLight.shadow.camera, "near").min(0).max(150).step(0.1);
+// pgui.add(pointLight.shadow.camera, "far").min(0).max(300).step(0.1);
+// pgui.add(sunMaterial, "emissiveIntensity").min(0).max(500).step(1);
+// pgui.addColor(sunMaterial, "color");
 
 //Objects
 const textureLoader = new THREE.TextureLoader();
 const seaTexture = textureLoader.load("./gebco_bathy.5400x2700_8bit.jpg");
 
-const earthTexture = textureLoader.load("./world.200411.3x21600x10800.jpg");
+const earthTexture = textureLoader.load("./world.200411.3x5400x2700.jpg");
 const displacementTexture = textureLoader.load(
-  "./gebco_08_rev_elev_21600x10800.png"
+  "./gebco_08_rev_elev_5400x2700.png"
 );
 const planetRadius = 50;
 const atmRadius = 60;
@@ -193,29 +194,41 @@ uniform vec3 uSeaLightColor;\n` + shader.fragmentShader;
   );
 };
 //GuI
-gui.add(material, "metalness").min(0).max(1).step(0.01);
-gui.add(material, "roughness").min(0).max(1).step(0.01);
-gui.add(material, "displacementScale").min(0).max(20).step(0.01);
-gui
-  .add(material.userData.uSeaLevel, "value")
-  .min(-4000)
-  .max(0)
-  .step(1)
-  .name("uSeaLevel");
-gui
-  .add(material.userData.uSeaDepthIntensity, "value")
-  .min(-3.0)
-  .max(5.0)
-  .step(0.01)
-  .name("uSeaDepthIntensity");
-gui.addColor(material.userData.uSeaLightColor, "value").name("uSeaLightColor");
-gui.addColor(material.userData.uSeaDarkColor, "value").name("uSeaDarkColor");
+// gui.add(material, "metalness").min(0).max(1).step(0.01);
+// gui.add(material, "roughness").min(0).max(1).step(0.01);
+// gui.add(material, "displacementScale").min(0).max(20).step(0.01);
+// gui
+//   .add(material.userData.uSeaLevel, "value")
+//   .min(-4000)
+//   .max(0)
+//   .step(1)
+//   .name("uSeaLevel");
+// gui
+//   .add(material.userData.uSeaDepthIntensity, "value")
+//   .min(-3.0)
+//   .max(5.0)
+//   .step(0.01)
+//   .name("uSeaDepthIntensity");
+// gui.addColor(material.userData.uSeaLightColor, "value").name("uSeaLightColor");
+// gui.addColor(material.userData.uSeaDarkColor, "value").name("uSeaDarkColor");
 
 const sphere = new THREE.Mesh(geometry, material);
 sphere.castShadow = true;
 sphere.receiveShadow = true;
 scene.add(sphere);
+
+//Camera Responsiveness
 camera.position.z = 100;
+if (window.innerWidth < 500) {
+  gsap.to(camera.position, {
+    duration: 5,
+    z: 160,
+  });
+  gsap.to(PARAMS, {
+    duration: 5,
+    pointR: 170,
+  });
+}
 
 // generateClouds();
 // scene.add(cloudGroup);
@@ -265,37 +278,38 @@ const atmMaterial = new THREE.ShaderMaterial({
 const atmosphere = new THREE.Mesh(atmGeometry, atmMaterial);
 scene.add(atmosphere);
 
-const atmGui = gui.addFolder("Atmosphere");
-atmGui
-  .add(atmMaterial.uniforms.atmRadius, "value")
-  .min(45)
-  .max(100)
-  .step(0.1)
-  .name("Atmosphere Radius");
-atmGui
-  .add(atmMaterial.uniforms.numInScatteringPoints, "value")
-  .min(1)
-  .max(40)
-  .step(1)
-  .name("numScatteringPoints");
-atmGui
-  .add(atmMaterial.uniforms.numOpticalDepthPoints, "value")
-  .min(1)
-  .max(40)
-  .step(1)
-  .name("numOpticalDepthPoints");
-atmGui
-  .add(atmMaterial.uniforms.densityFallOff, "value")
-  .min(-20)
-  .max(40)
-  .step(0.1)
-  .name("DensityFallOff");
-atmGui
-  .add(atmMaterial.uniforms.scatteringStrength, "value")
-  .min(-10)
-  .max(50)
-  .step(0.1)
-  .name("scatteringStrength");
+// Atmosphere GUI
+// const atmGui = gui.addFolder("Atmosphere");
+// atmGui
+//   .add(atmMaterial.uniforms.atmRadius, "value")
+//   .min(45)
+//   .max(100)
+//   .step(0.1)
+//   .name("Atmosphere Radius");
+// atmGui
+//   .add(atmMaterial.uniforms.numInScatteringPoints, "value")
+//   .min(1)
+//   .max(40)
+//   .step(1)
+//   .name("numScatteringPoints");
+// atmGui
+//   .add(atmMaterial.uniforms.numOpticalDepthPoints, "value")
+//   .min(1)
+//   .max(40)
+//   .step(1)
+//   .name("numOpticalDepthPoints");
+// atmGui
+//   .add(atmMaterial.uniforms.densityFallOff, "value")
+//   .min(-20)
+//   .max(40)
+//   .step(0.1)
+//   .name("DensityFallOff");
+// atmGui
+//   .add(atmMaterial.uniforms.scatteringStrength, "value")
+//   .min(-10)
+//   .max(50)
+//   .step(0.1)
+//   .name("scatteringStrength");
 
 //Stars
 
