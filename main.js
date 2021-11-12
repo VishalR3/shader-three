@@ -19,7 +19,7 @@ let PARAMS = {
   pointR: 150,
   pointTheta: Math.PI / 2,
   pointSi: Math.PI / 2,
-  ambientLightIntensity: 0.15,
+  ambientLightIntensity: 0.3,
 };
 
 //Handle Resize
@@ -384,7 +384,7 @@ function generateStars() {
   const starsMaterial = new THREE.MeshPhongMaterial({
     color: 0xffffff,
   });
-  let starsCount = 500;
+  let starsCount = 1000;
   for (let i = 0; i < starsCount; i++) {
     let si = Math.random() * 2 * Math.PI;
     let theta = Math.random() * Math.PI;
